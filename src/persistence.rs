@@ -469,7 +469,6 @@ impl Persistence for InMemoryPersistence {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::blockchain::Blockchain;
     use crate::crypto::Address;
 
     fn create_test_address(s: &str) -> Address {
@@ -485,14 +484,19 @@ mod tests {
         assert!(db.conn.lock().unwrap().is_autocommit());
     }
 
-    // NOTE: test_save_and_load_blockchain is skipped because Blockchain::new() internally
-    // calls mine_block() which is CPU-intensive and times out in test environments.
-    // The Persistence trait implementation is verified through compilation and the
-    // InMemoryPersistence impl is tested indirectly through blockchain creation in other tests.
     #[test]
-    #[ignore]
     fn test_save_and_load_blockchain() {
-        // Blockchain creation involves mining which is expensive; skipping for now.
-        // Persistence trait is already verified to compile and be properly implemented.
+        // Use a lightweight difficulty (0) so genesis mining is instantaneous in tests.
+        let pers = InMemoryPersistence::new();
+        let addr = create_test_address("miner");
+
+        // Create a new blockchain backed by our in-memory persistence with difficulty 0
+        let chain = Blockchain::new_with_persistence(addr, 0, Box::new(pers.clone())).expect("create chain");
+
+        // Persisted state should now be loadable from the persistence backend
+        let loaded = pers.load_blockchain().expect("load chain");
+
+        assert_eq!(loaded.blocks.len(), chain.blocks.len());
+        assert_eq!(loaded.difficulty, chain.difficulty);
     }
 }
