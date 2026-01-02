@@ -365,6 +365,11 @@ fn draw_ui(f: &mut ratatui::Frame, stats: &MiningStats, beneficiary: &str) {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Enforce that the authoritative node runs mining by default.
+    if std::env::var("TRINITY_STANDALONE").unwrap_or_default() != "1" {
+        eprintln!("This miner binary should be managed by `trinity-node`. To run standalone, set TRINITY_STANDALONE=1");
+        return Ok(());
+    }
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         println!("Usage: trinity-miner <beneficiary_address> [--threads <N>]");

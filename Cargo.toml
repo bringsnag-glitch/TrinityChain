@@ -41,6 +41,7 @@ tokio-tungstenite = "0.21"
 # HTTP & Web (Optional - only for trinity-api)
 axum = { version = "0.7.9", features = ["macros"], optional = true }
 tower-http = { version = "0.5", features = ["cors", "fs"], optional = true }
+hyper = { version = "0.14", optional = true, features = ["server"] }
 
 # CLI & TUI
 clap = { version = "4.5.53", features = ["derive"] }
@@ -78,7 +79,7 @@ teloxide = { version = "0.12", features = ["macros"], optional = true }
 [features]
 default = ["cli"]
 cli = []
-api = ["axum", "tower-http"]
+api = ["axum", "tower-http", "hyper"]
 telegram = ["teloxide"]
 full = ["api", "telegram"]
 

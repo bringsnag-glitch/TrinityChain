@@ -250,6 +250,12 @@ fn draw_ui(f: &mut ratatui::Frame, stats: &ServerStats) {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Prefer `trinity-node` as authoritative orchestrator.
+    if std::env::var("TRINITY_STANDALONE").unwrap_or_default() != "1" {
+        eprintln!("This server binary is deprecated; run `trinity-node` instead or set TRINITY_STANDALONE=1 to run standalone.");
+        return Ok(());
+    }
+
     let config = load_config()?;
     let port = config.network.api_port;
 

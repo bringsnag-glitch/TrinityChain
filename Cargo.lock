@@ -3336,6 +3336,7 @@ dependencies = [
  "fixed",
  "hex",
  "humantime",
+ "hyper 0.14.32",
  "indicatif",
  "ipnetwork",
  "log",
